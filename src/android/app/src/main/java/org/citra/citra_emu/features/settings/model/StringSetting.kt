@@ -1,0 +1,65 @@
+// Copyright 2023-2026 Citra Emulator Project / Azahar Emulator Project
+// Licensed under GPLv3 or any later version
+// Refer to the LICENSE.txt file included.
+
+package org.citra.citra_emu.features.settings.model
+
+import org.citra.citra_emu.features.settings.SettingKeys
+
+enum class StringSetting(
+    override val key: String,
+    override val section: String,
+    override val defaultValue: String
+) : AbstractSetting<String> {
+    INIT_TIME(SettingKeys.init_time(), CitraSettings.SECTION_SYSTEM, "946731601"),
+    CAMERA_INNER_NAME(SettingKeys.camera_inner_name(), CitraSettings.SECTION_CAMERA, "ndk"),
+    CAMERA_INNER_CONFIG(SettingKeys.camera_inner_config(), CitraSettings.SECTION_CAMERA, "_front"),
+    CAMERA_OUTER_LEFT_NAME(
+        SettingKeys.camera_outer_left_name(),
+        CitraSettings.SECTION_CAMERA,
+        "ndk"
+    ),
+    CAMERA_OUTER_LEFT_CONFIG(
+        SettingKeys.camera_outer_left_config(),
+        CitraSettings.SECTION_CAMERA,
+        "_back"
+    ),
+    CAMERA_OUTER_RIGHT_NAME(
+        SettingKeys.camera_outer_right_name(),
+        CitraSettings.SECTION_CAMERA,
+        "ndk"
+    ),
+    CAMERA_OUTER_RIGHT_CONFIG(
+        SettingKeys.camera_outer_right_config(),
+        CitraSettings.SECTION_CAMERA,
+        "_back"
+    ),
+    WEB_API_URL(SettingKeys.web_api_url(), CitraSettings.SECTION_NETWORK, ""),
+    NETWORK_TOKEN(SettingKeys.network_token(), CitraSettings.SECTION_NETWORK, "");
+
+    override fun valueFromString(string: String) = string
+
+    override val isRuntimeEditable: Boolean
+        get() {
+            for (setting in NOT_RUNTIME_EDITABLE) {
+                if (setting == this) {
+                    return false
+                }
+            }
+            return true
+        }
+
+    companion object {
+        private val NOT_RUNTIME_EDITABLE = listOf(
+            INIT_TIME,
+            CAMERA_INNER_NAME,
+            CAMERA_INNER_CONFIG,
+            CAMERA_OUTER_LEFT_NAME,
+            CAMERA_OUTER_LEFT_CONFIG,
+            CAMERA_OUTER_RIGHT_NAME,
+            CAMERA_OUTER_RIGHT_CONFIG
+        )
+
+        fun from(key: String): StringSetting? = StringSetting.values().firstOrNull { it.key == key }
+    }
+}

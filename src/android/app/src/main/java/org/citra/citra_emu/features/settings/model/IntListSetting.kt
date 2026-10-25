@@ -1,0 +1,53 @@
+// Copyright 2026 Citra Emulator Project / Azahar Emulator Project
+// Licensed under GPLv3 or any later version
+// Refer to the LICENSE.txt file included.
+
+package org.citra.citra_emu.features.settings.model
+
+import org.citra.citra_emu.features.settings.SettingKeys
+
+enum class IntListSetting(
+    override val key: String,
+    override val section: String,
+    override val defaultValue: List<Int>,
+    val canBeEmpty: Boolean = true
+) : AbstractSetting<List<Int>> {
+
+    LAYOUTS_TO_CYCLE(
+        SettingKeys.layouts_to_cycle(),
+        CitraSettings.SECTION_LAYOUT,
+        listOf(0, 1, 2, 3, 4, 5),
+        canBeEmpty = false
+    ),
+
+    /**
+     * Combo Buttons will be given options on MultiChoice setting initialization. This just makes selections empty by default.
+     */
+    COMBO_BUTTON_BUTTONS(
+        SettingKeys.combo_button_buttons(),
+        CitraSettings.SECTION_CONTROLS,
+        listOf(),
+        canBeEmpty = true
+    );
+
+    override fun valueToString(value: List<Int>): String = value.joinToString()
+
+    override fun valueFromString(string: String): List<Int>? = string.split(",")
+        .mapNotNull { it.trim().toIntOrNull() }
+        .takeIf { canBeEmpty || it.isNotEmpty() }
+    override val isRuntimeEditable: Boolean
+        get() {
+            for (setting in NOT_RUNTIME_EDITABLE) {
+                if (setting == this) {
+                    return false
+                }
+            }
+            return true
+        }
+
+    companion object {
+        private val NOT_RUNTIME_EDITABLE: List<IntListSetting> = emptyList()
+
+        fun from(key: String): IntListSetting? = values().firstOrNull { it.key == key }
+    }
+}

@@ -1,0 +1,37 @@
+// Copyright 2014-2026 Citra Emulator Project / Azahar Emulator Project
+// Licensed under GPLv2 or any later version
+// Refer to the misc/licenses/gplv2.txt file included.
+
+#pragma once
+
+#include <memory>
+#include <string>
+#include "common/settings.h"
+
+class AndroidConfigIni;
+
+class Config {
+private:
+    std::unique_ptr<AndroidConfigIni> android_config;
+    std::string android_config_loc;
+    std::string game_id;
+
+    bool LoadINI(const std::string& default_contents = "", bool retry = true);
+    void ReadValues();
+
+public:
+    explicit Config(std::string game_id = "");
+    ~Config();
+
+    void Reload();
+
+private:
+    /**
+     * Applies a value read from the android_config to a Setting.
+     *
+     * @param group The name of the INI group
+     * @param setting The yuzu setting to modify
+     */
+    template <typename Type, bool ranged>
+    void ReadSetting(const std::string& group, Settings::Setting<Type, ranged>& setting);
+};
